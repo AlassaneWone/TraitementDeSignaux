@@ -23,6 +23,7 @@ import datetime
 import imutils
 import time
 import cv2
+import numpy as np
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
@@ -38,13 +39,14 @@ else:
     vs = cv2.VideoCapture(args["video"])
 # initialize the first frame in the video stream
 firstFrame = None
+iteration = 0
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
     # text
     frame = vs.read()
     frame = frame if args.get("video", None) is None else frame[1]
-    text = "Unoccupied"
+    text = "No movement"
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -54,9 +56,11 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
     # if the first frame is None, initialize it
-    if firstFrame is None:
+    if firstFrame is None or iteration == 200:
         firstFrame = gray
+        iteration = 0
         continue
+    iteration += 1
     # compute the absolute difference between the current frame and
     # first frame
     frameDelta = cv2.absdiff(firstFrame, gray)
@@ -76,9 +80,9 @@ while True:
         # and update the text
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        text = "Occupied"
+        text = "There is movement"
     # draw the text and timestamp on the frame
-    cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
+    cv2.putText(frame, "Status: {}".format(text), (10, 20),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
                 (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
@@ -93,4 +97,3 @@ while True:
 # cleanup the camera and close any open windows
 vs.stop() if args.get("video", None) is None else vs.release()
 cv2.destroyAllWindows()
-r
