@@ -24,6 +24,7 @@ import imutils
 import time
 import cv2
 import numpy as np
+
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
@@ -39,7 +40,7 @@ else:
     vs = cv2.VideoCapture(args["video"])
 # initialize the first frame in the video stream
 firstFrame = None
-iteration = 0
+iteration = 200
 # loop over the frames of the video
 while True:
     # grab the current frame and initialize the occupied/unoccupied
@@ -55,8 +56,8 @@ while True:
     frame = imutils.resize(frame, width=500)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
-    # if the first frame is None, initialize it
-    if firstFrame is None or iteration == 200:
+    # if the first frame is None, initialize it and if the iteration is 200, update it based on the current frame
+    if firstFrame is None or iteration == 500:
         firstFrame = gray
         iteration = 0
         continue
