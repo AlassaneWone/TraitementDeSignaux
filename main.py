@@ -54,7 +54,7 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
     # if the first frame is None, initialize it
-    if firstFrame is None:
+    if firstFrame is None or cv2.waitKey(1) & 0xFF == ord("r"):
         firstFrame = gray
         continue
     # compute the absolute difference between the current frame and
