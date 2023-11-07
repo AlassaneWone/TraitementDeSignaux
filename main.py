@@ -31,9 +31,13 @@ for props in regions:
     plt.text(x0, y0, str(nbr_de_formes), color='r', fontsize=12, ha='center', va='center')
 
 ax0.imshow(image)
+ax0.title.set_text('Image originale')
 ax1.imshow(img, cmap='gray')
+ax1.title.set_text('Image en niveau de gris')
 ax2.imshow(canny_edges, cmap='gray')
+ax2.title.set_text('Détection de contours')
 ax3.imshow(label_img, cmap='gray')
+ax3.title.set_text('Détection de formes')
 
 for a in (ax0, ax1, ax2, ax3):
     a.axis('off')
