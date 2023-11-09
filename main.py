@@ -3,9 +3,11 @@ import time
 import random
 import tkinter as tk
 import threading
-import queue
 from cvzone.HandTrackingModule import HandDetector
 import cv2
+
+cap = cv2.VideoCapture(0)
+detector = HandDetector(detectionCon=0.8, maxHands=1)
 
 is_game_running = False
 player_score = 0
@@ -13,8 +15,6 @@ computer_score = 0
 rounds = 0
 possible_actions = ["rock", "paper", "scissors"]
 user_input = None
-
-frame_queue = queue.Queue()
 
 def start_game():
     global is_game_running
@@ -41,10 +41,10 @@ def start_game():
     update_score(determine_winner(computer_input), computer_input)
     is_game_running = False
 
-
 def determine_winner(computer_input):
     # 0 = tie, 1 = player won, 2 = computer won, 3 = error
     global user_input
+
     if user_input == None:
         return 0
     elif user_input == computer_input:
@@ -56,27 +56,27 @@ def determine_winner(computer_input):
     else:
         return 3
 
-
 def update_score(result, computer_input):
-    global user_input
+    global user_input, player_score, computer_score, rounds
     if result == 0:
         start_button["text"] = "You didn't choose \n  click to play  \n again \n computer chose \n" + computer_input
         return False
-    global player_score, computer_score, rounds
     time.sleep(0.5)
     if result == 2:
         player_score += 1
-        start_button["text"] = "You won! \n  click to play  \n again \n computer chose \n" + computer_input + " and you chose \n" + user_input
+        start_button[
+            "text"] = "You won! \n  click to play  \n again \n computer chose \n" + computer_input + " and you chose \n" + user_input
     elif result == 3:
         computer_score += 1
-        start_button["text"] = "You lost! \n  click to play  \n again \n computer chose \n" + computer_input + " and you chose \n" + user_input
+        start_button[
+            "text"] = "You lost! \n  click to play  \n again \n computer chose \n" + computer_input + " and you chose \n" + user_input
     else:
         start_button["text"] = "It's a tie! \n  click to play  \n again, \n you both chose \n" + computer_input
     rounds += 1
     label_player_score["text"] = player_score
     label_computer_score["text"] = computer_score
     label_rounds["text"] = rounds
-
+    user_input = None
 
 # Création de la fenêtre principale
 root = tk.Tk()
@@ -167,10 +167,6 @@ label_score["text"] = "Score"
 label_score["relief"] = "flat"
 label_score.place(x=400, y=30, width=200, height=50)
 
-cap = cv2.VideoCapture(0)
-detector = HandDetector(detectionCon=0.8, maxHands=1)
-
-
 def video_capture_thread():
     global cap, detector, user_input
     while True:
@@ -218,28 +214,14 @@ def video_capture_thread():
 
         # Display
         cv2.imshow("Image", img)
-        frame_queue.put(img)
         if cv2.waitKey(1) == ord('q'):
             break
 
+    cap.release()
+    cv2.destroyAllWindows()
 
 video_thread = threading.Thread(target=video_capture_thread)
 video_thread.daemon = True  # Le thread se terminera lorsque le programme principal se termine
 video_thread.start()
 
 root.mainloop()
-
-
-def update_ui():
-    if not frame_queue.empty():
-        img = frame_queue.get()
-        cv2.imshow("Image", img)
-
-    root.after(10, update_ui)
-
-
-root.after(10, update_ui)
-root.mainloop()
-
-cap.release()
-cv2.destroyAllWindows()
