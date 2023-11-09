@@ -104,12 +104,6 @@ class App:
         label_vs["text"] = "VS"
         label_vs.place(x=400, y=170, width=200, height=25)
 
-
-
-    def get_computer_input(self):
-        choix = random.choice(self.possible_actions)
-        return choix
-
     def get_user_input(self):
         return random.choice(self.possible_actions)
 
@@ -132,13 +126,11 @@ class App:
         self.start_button["text"] = "Shoot!"
         root.update()
 
-        computer_input = self.get_computer_input()
+        computer_input = random.choice(self.possible_actions)
         user_input = self.get_user_input()
 
         self.update_score(self.determine_winner(user_input, computer_input), computer_input)
         self.is_game_running = False
-
-
 
     def determine_winner(self, user_input, computer_input):
         # 0 = tie, 1 = player won, 2 = computer won
