@@ -1,10 +1,12 @@
-import tkinter as tk
 import tkinter.font as tkFont
 import time
 import math
 import random
 import tkinter as tk
 import time
+
+import cv2
+from PIL import Image, ImageTk
 
 
 class App:
@@ -69,7 +71,7 @@ class App:
         self.label_player_score["font"] = ft
         self.label_player_score["fg"] = "#333333"
         self.label_player_score["justify"] = "center"
-        self.label_player_score["text"] = "playerscore"
+        self.label_player_score["text"] = "0"
         self.label_player_score.place(x=400, y=140, width=200, height=25)
 
         self.label_computer_score = tk.Label(root)
@@ -77,7 +79,7 @@ class App:
         self.label_computer_score["font"] = ft
         self.label_computer_score["fg"] = "#333333"
         self.label_computer_score["justify"] = "center"
-        self.label_computer_score["text"] = "computerscore"
+        self.label_computer_score["text"] = "0"
         self.label_computer_score.place(x=400, y=190, width=200, height=25)
 
         label_rounds_played = tk.Label(root)
@@ -86,7 +88,7 @@ class App:
         label_rounds_played["fg"] = "#333333"
         label_rounds_played["justify"] = "right"
         label_rounds_played["text"] = "Rounds played:"
-        label_rounds_played.place(x=420,y=80,width=100,height=30)
+        label_rounds_played.place(x=420, y=80, width=100, height=30)
 
         self.label_rounds = tk.Label(root)
         ft = tkFont.Font(family='System', size=10)
@@ -94,7 +96,7 @@ class App:
         self.label_rounds["fg"] = "#333333"
         self.label_rounds["justify"] = "left"
         self.label_rounds["text"] = "0"
-        self.label_rounds.place(x=520,y=80,width=80,height=30)
+        self.label_rounds.place(x=520, y=80, width=80, height=30)
 
         label_vs = tk.Label(root)
         ft = tkFont.Font(family='System', size=13)
@@ -134,11 +136,11 @@ class App:
 
     def determine_winner(self, user_input, computer_input):
         # 0 = tie, 1 = player won, 2 = computer won
-        if user_input == computer_input :
+        if user_input == computer_input:
             return 0
-        elif (user_input == "rock" and computer_input  == "scissors") or \
-                (user_input == "paper" and computer_input  == "rock") or \
-                (user_input == "scissors" and computer_input  == "paper"):
+        elif (user_input == "rock" and computer_input == "scissors") or \
+                (user_input == "paper" and computer_input == "rock") or \
+                (user_input == "scissors" and computer_input == "paper"):
             return 1
         else:
             return 2
