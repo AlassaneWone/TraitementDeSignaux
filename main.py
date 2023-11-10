@@ -78,18 +78,18 @@ def update_score(result, computer_input):
     label_rounds["text"] = rounds
     user_input = None
 
-# Création de la fenêtre principale
+# Main window creation
 root = tk.Tk()
 root.title("")
-width = 600
-height = 300
+width = 800  # Shortened the width
+height = 600
 screenwidth = root.winfo_screenwidth()
 screenheight = root.winfo_screenheight()
 alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
 root.geometry(alignstr)
 root.resizable(width=False, height=False)
 
-# Création des éléments graphiques
+# Creating graphical elements
 start_button = tk.Button(root)
 start_button["activebackground"] = "#528181"
 start_button["bg"] = "#90ee90"
@@ -99,7 +99,7 @@ start_button["fg"] = "#000000"
 start_button["justify"] = "center"
 start_button["text"] = "Start Game"
 start_button["relief"] = "flat"
-start_button.place(x=200, y=0, width=200, height=300)
+start_button.place(x=0, y=0, width=350, height=600)  # Adjusted the position and size
 start_button["command"] = start_game
 
 label_player_score = tk.Label(root)
@@ -108,7 +108,7 @@ label_player_score["font"] = ft
 label_player_score["fg"] = "#333333"
 label_player_score["justify"] = "center"
 label_player_score["text"] = "0"
-label_player_score.place(x=400, y=140, width=200, height=25)
+label_player_score.place(x=350, y=280, width=400, height=50)  # Adjusted the position
 
 label_computer_score = tk.Label(root)
 ft = tkFont.Font(family='System', size=10)
@@ -116,7 +116,7 @@ label_computer_score["font"] = ft
 label_computer_score["fg"] = "#333333"
 label_computer_score["justify"] = "center"
 label_computer_score["text"] = "0"
-label_computer_score.place(x=400, y=190, width=200, height=25)
+label_computer_score.place(x=350, y=450, width=400, height=50)  # Adjusted the position
 
 label_rounds = tk.Label(root)
 ft = tkFont.Font(family='System', size=10)
@@ -124,7 +124,7 @@ label_rounds["font"] = ft
 label_rounds["fg"] = "#333333"
 label_rounds["justify"] = "left"
 label_rounds["text"] = "0"
-label_rounds.place(x=520, y=80, width=80, height=30)
+label_rounds.place(x=540, y=160, width=160, height=60)  # Adjusted the position
 
 label_rounds_played = tk.Label(root)
 ft = tkFont.Font(family='System', size=10)
@@ -132,7 +132,7 @@ label_rounds_played["font"] = ft
 label_rounds_played["fg"] = "#333333"
 label_rounds_played["justify"] = "right"
 label_rounds_played["text"] = "Rounds played:"
-label_rounds_played.place(x=420, y=80, width=100, height=30)
+label_rounds_played.place(x=390, y=160, width=200, height=60)  # Adjusted the position
 
 label_vs = tk.Label(root)
 ft = tkFont.Font(family='System', size=13)
@@ -140,7 +140,7 @@ label_vs["font"] = ft
 label_vs["fg"] = "#333333"
 label_vs["justify"] = "center"
 label_vs["text"] = "VS"
-label_vs.place(x=400, y=170, width=200, height=25)
+label_vs.place(x=350, y=340, width=400, height=50)  # Adjusted the position
 
 label_computer = tk.Label(root)
 ft = tkFont.Font(family='System', size=13)
@@ -148,7 +148,7 @@ label_computer["font"] = ft
 label_computer["fg"] = "#333333"
 label_computer["justify"] = "center"
 label_computer["text"] = "Computer"
-label_computer.place(x=400, y=200, width=200, height=50)
+label_computer.place(x=350, y=400, width=400, height=100)  # Adjusted the position
 
 label_player = tk.Label(root)
 ft = tkFont.Font(family='System', size=13)
@@ -156,7 +156,7 @@ label_player["font"] = ft
 label_player["fg"] = "#333333"
 label_player["justify"] = "center"
 label_player["text"] = "Player"
-label_player.place(x=400, y=100, width=200, height=50)
+label_player.place(x=350, y=200, width=400, height=100)  # Adjusted the position
 
 label_score = tk.Label(root)
 ft = tkFont.Font(family='System', size=18)
@@ -165,7 +165,11 @@ label_score["fg"] = "#333333"
 label_score["justify"] = "center"
 label_score["text"] = "Score"
 label_score["relief"] = "flat"
-label_score.place(x=400, y=30, width=200, height=50)
+label_score.place(x=350, y=60, width=400, height=100)  # Adjusted the position
+
+# Creating the camera feed panel
+panel = tk.Label(root)
+panel.place(x=700, y=0, width=200, height=600)  # Adjusted the position and size
 
 def video_capture_thread():
     global cap, detector, user_input
@@ -173,7 +177,7 @@ def video_capture_thread():
         # Get image frame
         success, img = cap.read()
         # Find the hand and its landmarks
-        hands, img = detector.findHands(img)  # with draw
+        hands, img_det = detector.findHands(img)  # with draw
 
         if hands:
             # Information for the first hand detected
@@ -185,35 +189,24 @@ def video_capture_thread():
 
             # Count the number of fingers up for the first hand
             fingers1 = detector.fingersUp(hand1)
-            # print(f'H1 = {fingers1}', end=" ")  # Print the count of fingers that are up
 
-            if (fingers1[0] == 0 and
-                    fingers1[1] == 1 and
-                    fingers1[2] == 1 and
-                    fingers1[3] == 0 and
-                    fingers1[4] == 0):
+            if fingers1 == [0, 1, 1, 0, 0]:
                 user_input = 'scissors'
                 print('ciseaux')
-            elif (fingers1[0] == 0 and
-                  fingers1[1] == 0 and
-                  fingers1[2] == 0 and
-                  fingers1[3] == 0 and
-                  fingers1[4] == 0):
+            elif fingers1 == [0, 0, 0, 0, 0]:
                 user_input = 'rock'
                 print('pierre')
-            elif ((fingers1[0] == 1 or fingers1[0] == 0) and
-                  fingers1[1] == 1 and
-                  fingers1[2] == 1 and
-                  fingers1[3] == 1 and
-                  fingers1[4] == 1):
+            elif fingers1 == [0, 1, 1, 1, 1] or fingers1 == [1, 1, 1, 1, 1]:
                 user_input = 'paper'
                 print('feuille')
+            elif fingers1 == [0, 0, 1, 0, 0]:
+                print('Pas cool')
             else:
                 user_input = None
                 print('pas de signe détecté')
 
         # Display
-        cv2.imshow("Image", img)
+        cv2.imshow("Hand", img_det)
         if cv2.waitKey(1) == ord('q'):
             break
 
@@ -221,7 +214,7 @@ def video_capture_thread():
     cv2.destroyAllWindows()
 
 video_thread = threading.Thread(target=video_capture_thread)
-video_thread.daemon = True  # Le thread se terminera lorsque le programme principal se termine
+video_thread.daemon = True  # The thread will terminate when the main program terminates
 video_thread.start()
 
 root.mainloop()
