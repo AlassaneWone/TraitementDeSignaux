@@ -1,9 +1,12 @@
 import os
 import cv2
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from keras.utils import to_categorical
+from keras.callbacks import EarlyStopping
+from keras.regularizers import l1, l2
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 import numpy as np
 
 X = []
@@ -55,21 +58,55 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 X_train = X_train.reshape(-1, 100, 100, 1)
 X_test = X_test.reshape(-1, 100, 100, 1)
 
+early_stopping = EarlyStopping(monitor='val_loss', patience=5)
+
 # Define the model
 model = Sequential()
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=X_train.shape[1:]))
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=X_train.shape[1:], kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu'))
+
+# Dropout Layer
+model.add(Dropout(0.3))
+
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+
 model.add(Flatten())
-model.add(Dense(128, activation='relu'))
+model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
+
+# Another Dropout Layer
+model.add(Dropout(0.5))
+
 model.add(Dense(3, activation='softmax'))  # 3 classes for rock, paper, scissors
 
 # Compile the model
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+history = model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
 # Save the model
 model.save('TraitementDeSignaux/model.keras')
+
+
+# Plot training & validation accuracy values
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+
+plt.tight_layout()
+plt.show()
