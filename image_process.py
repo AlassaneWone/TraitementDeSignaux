@@ -72,4 +72,4 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
 
 # Save the model
-model.save('model.keras')
+model.save('TraitementDeSignaux/model.keras')
