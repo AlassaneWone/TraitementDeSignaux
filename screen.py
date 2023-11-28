@@ -12,6 +12,12 @@ active = False
 # Load the model
 model = load_model('TraitementDeSignaux/model.keras')
 
+standard_size = (100, 100)
+
+firstFrame = None
+
+countdown_complete = threading.Event()
+
 def process_image(frame):
     img = cv2.resize(frame, standard_size)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -23,11 +29,6 @@ def process_image(frame):
     cv2.drawContours(mask, contours, -1, (255), thickness=cv2.FILLED)
     result = cv2.subtract(img_gray, cv2.bitwise_not(mask))  # Subtract mask from grayscale image
     return result
-
-standard_size = (100, 100)
-
-firstFrame = None
-countdown_complete = threading.Event()
 
 def countdown():
     global countdown_complete
