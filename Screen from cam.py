@@ -31,7 +31,8 @@ while True:
     if countdown_complete.is_set():
         screenshot = frame.copy()
         screenshot = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        edges = cv2.Canny(screenshot, 50, 200)
+        screenshot = cv2.GaussianBlur(screenshot, (11, 11), 0)
+        edges = cv2.Canny(screenshot, 50, 100)
         cv2.imshow("Screenshot", edges)
         countdown_complete.clear()
 
@@ -42,3 +43,4 @@ while True:
 
 vs.release()
 cv2.destroyAllWindows()
+
