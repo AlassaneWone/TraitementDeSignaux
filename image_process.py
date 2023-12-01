@@ -16,7 +16,7 @@ categories = ["paper", "rock", "scissors"]
 
 standard_size = (100, 100)  # Smaller standard size
 
-dataset_path = "/media/alassane/Data/2.COURS/2023-24/Traitement de siglaux/TraitementDeSignaux/Dataset"
+dataset_path = "c:\TDS\TraitementDeSignaux/Dataset"
 
 def process_image(image_path):
     img = cv2.imread(image_path)
@@ -83,10 +83,10 @@ model.add(Dense(3, activation='softmax'))  # 3 classes for rock, paper, scissors
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-history = model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[early_stopping])
+history = model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test), callbacks=[early_stopping])
 
 # Save the model
-model.save('TraitementDeSignaux/model.keras')
+model.save('model.keras')
 
 
 # Plot training & validation accuracy values
