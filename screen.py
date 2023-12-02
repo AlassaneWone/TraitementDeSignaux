@@ -35,34 +35,29 @@ def process_image(frame):
 def countdown(label_gesture, label_computer_choice, label_result):
     global screenshot_countdown, player_score, computer_score
 
-    for i in range(screenshot_countdown, 0, -1):
-        print(f'Screenshot dans {i} secondes')
-        time.sleep(1)
-    print("Screenshot")
-
     # Logique pour déterminer le gagnant après la capture d'écran
     player_gesture = label_gesture.cget("text").split(":")[1].strip()
     computer_choice = label_computer_choice.cget("text").split(":")[1].strip()
 
     # Logique du jeu (pierre-papier-ciseaux)
     if player_gesture == computer_choice:
-        result_text = "Égalité"
+        result_text = "Draw"
     elif (
         (player_gesture == "rock" and computer_choice == "scissors") or
         (player_gesture == "paper" and computer_choice == "rock") or
         (player_gesture == "scissors" and computer_choice == "paper")
     ):
-        result_text = "Vous gagnez!"
+        result_text = "You Won!"
         player_score += 1
     else:
-        result_text = "L'ordinateur gagne!"
+        result_text = "The compter won!"
         computer_score += 1
 
-    label_result.config(text=f"Résultat: {result_text}")
+    label_result.config(text=f"Outcome: {result_text}")
     label_result.pack(pady=10)  # Affichage du résultat
 
-    label_player_score.config(text=f"Joueur: {player_score}")
-    label_computer_score.config(text=f"Ordinateur: {computer_score}")
+    label_player_score.config(text=f"Player: {player_score}")
+    label_computer_score.config(text=f"Computer: {computer_score}")
 
 # Fonction pour afficher la caméra en temps réel
 def show_camera():
@@ -94,8 +89,9 @@ def capture_screenshot():
     panel_camera.config(image=image)
     panel_camera.image = image
 
+    label_probability.config(text=f"Probability : Paper:{(label[0]*100):.2f}%, Rock:{(label[1]*100):.2f}%, Scissors:{(label[2]*100):.2f}%")
     label_gesture.config(text=f"Geste détecté : {gesture}")
-    label_computer_choice.config(text=f"Ordinateur : {random.choice(categories)}")
+    label_computer_choice.config(text=f"Computer : {random.choice(categories)}")
 
     countdown_thread = threading.Thread(target=countdown, args=(label_gesture, label_computer_choice, label_result))
     countdown_thread.start()
@@ -104,27 +100,32 @@ def capture_screenshot():
 root = tk.Tk()
 root.title("Rock-Paper-Scissors")
 
+label_score = tk.Label(root, text="Score:")
+label_score.pack(pady=10)
 # Création des labels
-label_player_score = tk.Label(root, text="Joueur: 0")
+label_player_score = tk.Label(root, text="Player: 0")
 label_player_score.pack(pady=10)
 
-label_computer_score = tk.Label(root, text="Ordinateur: 0")
+label_computer_score = tk.Label(root, text="Computer: 0")
 label_computer_score.pack(pady=10)
 
 # Création du panneau pour afficher la caméra en temps réel
 panel = tk.Label(root)
 panel.pack(padx=10, pady=10)
 
+label_probability = tk.Label(root, text="Probabilité : ")
+label_probability.pack(pady=10)
+
 # Création de la zone de texte pour afficher le geste détecté
-label_gesture = tk.Label(root, text="Geste détecté : ")
+label_gesture = tk.Label(root, text="Detected gesture : ")
 label_gesture.pack(pady=10)
 
 # Création de la zone de texte pour afficher le choix de l'ordinateur
-label_computer_choice = tk.Label(root, text="Ordinateur : ")
+label_computer_choice = tk.Label(root, text="Computer : ")
 label_computer_choice.pack(pady=10)
 
 # Création de la zone de texte pour afficher le résultat
-label_result = tk.Label(root, text="Résultat : ")
+label_result = tk.Label(root, text="Outcome : ")
 label_result.pack(pady=10)
 
 # Initialisation de la capture vidéo
