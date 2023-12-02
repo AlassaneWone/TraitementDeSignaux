@@ -17,7 +17,7 @@ categories = ["paper", "rock", "scissors"]
 
 standard_size = (100, 100)  # Smaller standard size
 
-dataset_path = "/media/alassane/Data/2.COURS/2023-24/Traitement de siglaux/TraitementDeSignaux/Dataset"
+dataset_path = "c:\TDS\TraitementDeSignaux/Dataset"
 
 def process_image(image_path):
     img = cv2.imread(image_path)
@@ -102,7 +102,7 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 history = model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
 
 # Save the model
-model.save('TraitementDeSignaux/model.keras')
+model.save('model.keras')
 
 # Save the model
 model.save('TraitementDeSignaux/model.keras')
