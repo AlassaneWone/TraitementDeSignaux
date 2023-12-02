@@ -1,24 +1,21 @@
 import cv2
-import imutils
-import time
+import tkinter as tk
 import threading
+from PIL import Image, ImageTk
+import time
+import imutils
 import numpy as np
 from keras.models import load_model
-from PIL import Image, ImageTk
-import tkinter as tk
 import random
 
 categories = ["paper", "rock", "scissors"]
 
-active = False
 screenshot_countdown = 5
 
 # Load the model
 model = load_model('model.keras')
 
 standard_size = (100, 100)
-
-countdown_complete = threading.Event()
 
 player_score = 0
 computer_score = 0
@@ -36,12 +33,11 @@ def process_image(frame):
     return result
 
 def countdown(label_gesture, label_computer_choice, label_result):
-    global countdown_complete, screenshot_countdown, player_score, computer_score
+    global screenshot_countdown, player_score, computer_score
 
     for i in range(screenshot_countdown, 0, -1):
         print(f'Screenshot dans {i} secondes')
         time.sleep(1)
-    countdown_complete.set()
     print("Screenshot")
 
     # Logique pour déterminer le gagnant après la capture d'écran
@@ -68,12 +64,20 @@ def countdown(label_gesture, label_computer_choice, label_result):
     label_player_score.config(text=f"Joueur: {player_score}")
     label_computer_score.config(text=f"Ordinateur: {computer_score}")
 
-def capture_screenshot(root, vs, panel, label_gesture, label_computer_choice, label_result):
-    global active, countdown_complete, screenshot_countdown
-
+# Fonction pour afficher la caméra en temps réel
+def show_camera():
     ret, frame = vs.read()
-    frame = imutils.resize(frame, width=500, height=600)
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    frame = Image.fromarray(frame)
+    frame = ImageTk.PhotoImage(frame)
+    panel.config(image=frame)
+    panel.image = frame
+    root.after(10, show_camera)  # Update every 10 milliseconds
 
+# Fonction pour capturer un screenshot
+def capture_screenshot():
+    ret, frame = vs.read()
+    # Capture du screenshot et traitement de l'image
     screenshot_color = frame.copy()
     screenshot = process_image(screenshot_color)
 
@@ -81,31 +85,20 @@ def capture_screenshot(root, vs, panel, label_gesture, label_computer_choice, la
     max_index = np.argmax(label)
     gesture = categories[max_index]
 
-    # Choix aléatoire de l'ordinateur
-    computer_choice = random.choice(categories)
-
     screenshot = cv2.resize(screenshot, (500, 500))
 
     image = cv2.cvtColor(screenshot, cv2.COLOR_GRAY2RGB)
     image = Image.fromarray(image)
     image = ImageTk.PhotoImage(image)
 
-    panel.config(image=image)
-    panel.image = image
+    panel_camera.config(image=image)
+    panel_camera.image = image
 
     label_gesture.config(text=f"Geste détecté : {gesture}")
-    label_computer_choice.config(text=f"Ordinateur : {computer_choice}")
-
-    countdown_complete.clear()
-    screenshot_countdown = 5
+    label_computer_choice.config(text=f"Ordinateur : {random.choice(categories)}")
 
     countdown_thread = threading.Thread(target=countdown, args=(label_gesture, label_computer_choice, label_result))
     countdown_thread.start()
-
-    cv2.imshow("camera", frame)
-
-def start_countdown():
-    root.after(5000, capture_screenshot, root, vs, panel, label_gesture, label_computer_choice, label_result)
 
 # Création de la fenêtre Tkinter
 root = tk.Tk()
@@ -118,7 +111,7 @@ label_player_score.pack(pady=10)
 label_computer_score = tk.Label(root, text="Ordinateur: 0")
 label_computer_score.pack(pady=10)
 
-# Création du panneau pour afficher la capture d'écran
+# Création du panneau pour afficher la caméra en temps réel
 panel = tk.Label(root)
 panel.pack(padx=10, pady=10)
 
@@ -134,18 +127,29 @@ label_computer_choice.pack(pady=10)
 label_result = tk.Label(root, text="Résultat : ")
 label_result.pack(pady=10)
 
-# Création du bouton pour activer/désactiver la capture d'écran
-toggle_button = tk.Button(root, text="Capture Screenshot", command=start_countdown)
-toggle_button.pack(pady=10)
-
 # Initialisation de la capture vidéo
 vs = cv2.VideoCapture(0)
 time.sleep(1.0)
 
+# Création de la fenêtre pour la caméra traitée
+camera_window = tk.Toplevel(root)
+camera_window.title("Camera Feed")
+
+# Création du panneau pour afficher la caméra traitée
+panel_camera = tk.Label(camera_window)
+panel_camera.pack(padx=10, pady=10)
+
+# Création du bouton pour capturer le screenshot
+toggle_button = tk.Button(root, text="Capture Screenshot", command=capture_screenshot)
+toggle_button.pack(pady=10)
+
 # Lancement de la boucle principale de l'interface Tkinter
+root.after(10, show_camera)  # Initial call to start the camera feed
 root.mainloop()
 
 # Arrêt propre de la capture vidéo à la fermeture de l'application
 vs.release()
 cv2.destroyAllWindows()
+
+
 
