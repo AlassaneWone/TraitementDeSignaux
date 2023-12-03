@@ -4,14 +4,10 @@ import cv2
 from keras.models import Sequential, Model
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from keras.utils import to_categorical
-from keras.callbacks import EarlyStopping
 from keras.regularizers import l1, l2
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
-
-from keras.utils import get_custom_objects
-from keras.layers import Activation
 
 X = []
 y = []
@@ -62,42 +58,34 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 X_train = X_train.reshape(-1, 100, 100, 1)
 X_test = X_test.reshape(-1, 100, 100, 1)
 
-#early_stopping = EarlyStopping(monitor='val_loss', patience=5)
-
-from keras.backend import sigmoid
-
-def swish(x, beta = 1):
-    return (x * sigmoid(beta * x))
-
-get_custom_objects().update({'swish': Activation(swish)})
 
 # Define the model
 model = Sequential()
 
 # First Convolutional Layer with Regularization
-model.add(Conv2D(64, (3, 3), activation='swish', input_shape=X_train.shape[1:], kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
+model.add(Conv2D(64, (3, 3), activation='relu', input_shape=X_train.shape[1:], kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 # Dropout Layer
 model.add(Dropout(0.3))
 
 # Second Convolutional Layer with Regularization
-model.add(Conv2D(64, (3, 3), activation='swish', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 # Third Convolutional Layer
-model.add(Conv2D(128, (3,3), activation='swish'))
+model.add(Conv2D(128, (3,3), activation='relu'))
 model.add(MaxPooling2D(2,2))
 
 # Fourth Convolutional Layer
-model.add(Conv2D(128, (3,3), activation='swish'))
+model.add(Conv2D(128, (3,3), activation='relu'))
 model.add(MaxPooling2D(2,2))
 
 # Flatten Layer
 model.add(Flatten())
 
 # Dense Layer with Regularization
-model.add(Dense(512, activation='swish', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
+model.add(Dense(512, activation='relu', kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
 
 # Dropout Layer
 model.add(Dropout(0.5))
@@ -109,10 +97,7 @@ model.add(Dense(3, activation='softmax'))  # 3 classes for rock, paper, scissors
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-history = model.fit(X_train, y_train, epochs=50, validation_data=(X_test, y_test))
-
-# Save the model
-model.save('model.keras')
+history = model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test))
 
 # Save the model
 model.save('TraitementDeSignaux/model.keras')
