@@ -21,6 +21,10 @@ player_score = 0
 computer_score = 0
 
 def process_image(frame):
+    """
+    PRE: 'frame' is a color (BGR) image obtained from a webcam or a file.
+    POST: Returns the processed image in grayscale with contours highlighted.
+    """
     img = cv2.resize(frame, standard_size)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
@@ -33,13 +37,15 @@ def process_image(frame):
     return result
 
 def countdown(label_gesture, label_computer_choice, label_result):
+    """
+    PRE: 'label_gesture', 'label_computer_choice', and 'label_result' are tkinter Label widgets.
+    POST: 'label_result', 'label_player_score', and 'label_computer_score' are updated with the outcome of the round and the new scores.
+    """
     global screenshot_countdown, player_score, computer_score
 
-    # Logique pour déterminer le gagnant après la capture d'écran
     player_gesture = label_gesture.cget("text").split(":")[1].strip()
     computer_choice = label_computer_choice.cget("text").split(":")[1].strip()
 
-    # Logique du jeu (pierre-papier-ciseaux)
     if player_gesture == computer_choice:
         result_text = "Draw"
     elif (
@@ -54,25 +60,38 @@ def countdown(label_gesture, label_computer_choice, label_result):
         computer_score += 1
 
     label_result.config(text=f"Outcome: {result_text}")
-    label_result.pack(pady=10)  # Affichage du résultat
+    label_result.pack(pady=10)
 
     label_player_score.config(text=f"Player: {player_score}")
     label_computer_score.config(text=f"Computer: {computer_score}")
 
-# Fonction pour afficher la caméra en temps réel
+
 def show_camera():
-    ret, frame = vs.read()
+    """
+    PRE: 'vs' is a VideoCapture object that has been initialized with a video source (like a webcam).
+         'panel' is a tkinter Label or similar widget that can display images.
+         'root' is a tkinter root or Toplevel window.
+    POST: 'panel' is updated with a new frame from the video source.
+    """
+    frame = vs.read()
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame = Image.fromarray(frame)
     frame = ImageTk.PhotoImage(frame)
     panel.config(image=frame)
     panel.image = frame
-    root.after(10, show_camera)  # Update every 10 milliseconds
+    root.after(10, show_camera)
 
-# Fonction pour capturer un screenshot
+
 def capture_screenshot():
-    ret, frame = vs.read()
-    # Capture du screenshot et traitement de l'image
+    """
+    PRE: 'vs' is a VideoCapture object that has been initialized with a video source (like a webcam).
+         'panel_camera', 'label_probability', 'label_gesture', and 'label_computer_choice' are tkinter Label widgets.
+         'model' is a trained machine learning model that can predict gestures from images.
+         'categories' is a list of gesture names in the order that 'model' uses.
+    POST: 'panel_camera', 'label_probability', 'label_gesture', and 'label_computer_choice' are updated with new information.
+          A new thread is started to determine the winner of the round.
+    """
+    frame = vs.read()
     screenshot_color = frame.copy()
     screenshot = process_image(screenshot_color)
 
@@ -96,59 +115,60 @@ def capture_screenshot():
     countdown_thread = threading.Thread(target=countdown, args=(label_gesture, label_computer_choice, label_result))
     countdown_thread.start()
 
-# Création de la fenêtre Tkinter
+# Tkinter window creation
 root = tk.Tk()
 root.title("Rock-Paper-Scissors")
 
+# Label creation
 label_score = tk.Label(root, text="Score:")
 label_score.pack(pady=10)
-# Création des labels
+
 label_player_score = tk.Label(root, text="Player: 0")
 label_player_score.pack(pady=10)
 
 label_computer_score = tk.Label(root, text="Computer: 0")
 label_computer_score.pack(pady=10)
 
-# Création du panneau pour afficher la caméra en temps réel
+# Create a panel to display the camera in real time
 panel = tk.Label(root)
 panel.pack(padx=10, pady=10)
 
 label_probability = tk.Label(root, text="Probabilité : ")
 label_probability.pack(pady=10)
 
-# Création de la zone de texte pour afficher le geste détecté
+# Create a text box to display the detected gesture
 label_gesture = tk.Label(root, text="Detected gesture : ")
 label_gesture.pack(pady=10)
 
-# Création de la zone de texte pour afficher le choix de l'ordinateur
+# Create text box to display computer selection
 label_computer_choice = tk.Label(root, text="Computer : ")
 label_computer_choice.pack(pady=10)
 
-# Création de la zone de texte pour afficher le résultat
+# Create a text box to display the result
 label_result = tk.Label(root, text="Outcome : ")
 label_result.pack(pady=10)
 
-# Initialisation de la capture vidéo
+# Initialize video capture
 vs = cv2.VideoCapture(0)
 time.sleep(1.0)
 
-# Création de la fenêtre pour la caméra traitée
+# Create window for processed camera
 camera_window = tk.Toplevel(root)
 camera_window.title("Camera Feed")
 
-# Création du panneau pour afficher la caméra traitée
+# Create a panel to display the processed camera
 panel_camera = tk.Label(camera_window)
 panel_camera.pack(padx=10, pady=10)
 
-# Création du bouton pour capturer le screenshot
+# Create button to capture screenshot
 toggle_button = tk.Button(root, text="Capture Screenshot", command=capture_screenshot)
 toggle_button.pack(pady=10)
 
-# Lancement de la boucle principale de l'interface Tkinter
-root.after(10, show_camera)  # Initial call to start the camera feed
+# Launch the main loop of the Tkinter interface
+root.after(10, show_camera)
 root.mainloop()
 
-# Arrêt propre de la capture vidéo à la fermeture de l'application
+# Clean stop of video capture when application is closed
 vs.release()
 cv2.destroyAllWindows()
 

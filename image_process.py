@@ -14,24 +14,32 @@ y = []
 
 categories = ["paper", "rock", "scissors"]
 
-standard_size = (100, 100)  # Smaller standard size
+standard_size = (100, 100)
 
-dataset_path = "TraitementDeSignaux/Dataset"
+dataset_path = "Dataset"
 
 def process_image(image_path):
+    """
+    PRE: 'image_path' is a string representing the path to an image file.
+    POST: Returns the processed image as a 1D array.
+    """
     img = cv2.imread(image_path)
     img = cv2.resize(img, standard_size)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
     edges = cv2.Canny(img_blur, 50, 50)
-    edges = cv2.convertScaleAbs(edges)  # Convert image to 8-bit before finding contours
+    edges = cv2.convertScaleAbs(edges)
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     mask = np.zeros_like(img_gray)
     cv2.drawContours(mask, contours, -1, (255), thickness=cv2.FILLED)
-    result = cv2.subtract(img_gray, cv2.bitwise_not(mask))  # Subtract mask from grayscale image
+    result = cv2.subtract(img_gray, cv2.bitwise_not(mask))
     return result.flatten()
 
 def load_data(category):
+    """
+    PRE: 'category' is a string representing the name of a category of images.
+    POST: 'X' and 'y' are updated with the processed images and their corresponding categories.
+    """
     path = os.path.join(dataset_path, category)
     images = [os.path.join(path, img) for img in os.listdir(path) if img.endswith(".png")]
     for img in images:
@@ -100,7 +108,7 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 history = model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test))
 
 # Save the model
-model.save('TraitementDeSignaux/model.keras')
+model.save('model.keras')
 
 for j in range(len(model.layers)):
     # Specify the layer to visualize
