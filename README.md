@@ -4,7 +4,7 @@
 
 pip install -r requirements.txt
 
-=== Télécharger le dataset d'images nécessaire à l'l'entraînement du CNN ===
+=== Télécharger le dataset d'images nécessaire à l'entraînement du CNN ===
 
 Via ce lien : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
 
