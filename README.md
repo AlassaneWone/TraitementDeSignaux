@@ -4,9 +4,12 @@
 
 pip install -r requirements.txt
 
-=== Télécharger le dataset d'images nécessaire à l'entraînement du CNN ===
+=== Télécharger le nécessaire au bon fonctionnement du projet ===
 
-Via ce lien : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
+Un fichier qui contient un modèle CNN pré-entraîné : https://www.dropbox.com/scl/fi/123gb88erzmqaetsz64vh/model.keras?rlkey=u9irvhwjbrcr65o6rbvbjeqq2&dl=0
+(Autre solution, utiliser le script image_process.py pour créer un nouveau modèle)
+
+Dataset d'images nécessaire à l'entraînement du CNN : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
 
 === Structure de fichier pour le bon fonctionnement du projet ===
 .  
