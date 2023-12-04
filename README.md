@@ -11,15 +11,15 @@ Via ce lien : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
 === Structure de fichier pour le bon fonctionnement du projet ===
 .  
 └── Projet-tds/  
-    ├── Dataset/  
-    │   ├── paper  
-    │   ├── rock  
-    │   └── scissors  
-    ├── image_process.py  
-    ├── main.py  
-    ├── model.keras  
-    ├── README.md  
-    └── requirements.txt  
+&nbsp;&nbsp;&nbsp;&nbsp;├── Dataset/  
+&nbsp;&nbsp;&nbsp;&nbsp;│   ├── paper  
+&nbsp;&nbsp;&nbsp;&nbsp;│   ├── rock  
+&nbsp;&nbsp;&nbsp;&nbsp;│   └── scissors  
+&nbsp;&nbsp;&nbsp;&nbsp;├── image_process.py  
+&nbsp;&nbsp;&nbsp;&nbsp;├── main.py  
+&nbsp;&nbsp;&nbsp;&nbsp;├── model.keras  
+&nbsp;&nbsp;&nbsp;&nbsp;├── README.md  
+&nbsp;&nbsp;&nbsp;&nbsp;└── requirements.txt  
 
 === Explication des fichiers importants ===
 
