@@ -18,6 +18,7 @@ standard_size = (100, 100)
 
 dataset_path = "Dataset"
 
+
 def process_image(image_path):
     """
     PRE: 'image_path' is a string representing the path to an image file.
@@ -35,6 +36,7 @@ def process_image(image_path):
     result = cv2.subtract(img_gray, cv2.bitwise_not(mask))
     return result.flatten()
 
+
 def load_data(category):
     """
     PRE: 'category' is a string representing the name of a category of images.
@@ -47,10 +49,10 @@ def load_data(category):
         X.append(processed_image)
         y.append(categories.index(category))
 
+
 # Load data
 for category in categories:
     load_data(category)
-
 
 # Convert X and y to numpy arrays
 X = np.array(X)
@@ -66,12 +68,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 X_train = X_train.reshape(-1, 100, 100, 1)
 X_test = X_test.reshape(-1, 100, 100, 1)
 
-
 # Define the model
 model = Sequential()
 
 # First Convolutional Layer with Regularization
-model.add(Conv2D(64, (3, 3), activation='relu', input_shape=X_train.shape[1:], kernel_regularizer=l2(0.02), bias_regularizer=l1(0.02)))
+model.add(Conv2D(64, (3, 3), activation='relu', input_shape=X_train.shape[1:], kernel_regularizer=l2(0.02),
+                 bias_regularizer=l1(0.02)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 # Dropout Layer
@@ -82,12 +84,12 @@ model.add(Conv2D(64, (3, 3), activation='relu', kernel_regularizer=l2(0.02), bia
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 # Third Convolutional Layer
-model.add(Conv2D(128, (3,3), activation='relu'))
-model.add(MaxPooling2D(2,2))
+model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D(2, 2))
 
 # Fourth Convolutional Layer
-model.add(Conv2D(128, (3,3), activation='relu'))
-model.add(MaxPooling2D(2,2))
+model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D(2, 2))
 
 # Flatten Layer
 model.add(Flatten())
@@ -112,7 +114,7 @@ model.save('model.keras')
 
 for j in range(len(model.layers)):
     # Specify the layer to visualize
-    layer_to_visualize = model.layers[j]  
+    layer_to_visualize = model.layers[j]
 
     # Create a new model that outputs the feature maps
     visualization_model = Model(inputs=model.input, outputs=layer_to_visualize.output)
@@ -128,18 +130,17 @@ for j in range(len(model.layers)):
 
         # Now, you can visualize the feature maps
         plt.figure(figsize=(10, 10))
-        plt.suptitle(f'Feature Maps of Layer {j+1} ({type(layer_to_visualize).__name__})')
+        plt.suptitle(f'Feature Maps of Layer {j + 1} ({type(layer_to_visualize).__name__})')
         for i in range(feature_maps.shape[-1]):
-            plt.subplot(grid_size, grid_size, i+1)
+            plt.subplot(grid_size, grid_size, i + 1)
             plt.imshow(feature_maps[0, :, :, i], cmap='viridis')
             plt.axis('off')
     elif isinstance(layer_to_visualize, (Dense, Dropout, Flatten)) and len(feature_maps.shape) == 2:
         # Visualize the output of Dense, Dropout, and Flatten layers
         plt.figure(figsize=(10, 2))
-        plt.suptitle(f'Output of Layer {j+1} ({type(layer_to_visualize).__name__})')
+        plt.suptitle(f'Output of Layer {j + 1} ({type(layer_to_visualize).__name__})')
         plt.imshow(feature_maps, cmap='viridis')
         plt.axis('off')
-
 
 # Plot training & validation accuracy values
 plt.figure(figsize=(12, 6))
@@ -150,7 +151,6 @@ plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
-
 
 # Plot training & validation loss values
 plt.subplot(1, 2, 2)
