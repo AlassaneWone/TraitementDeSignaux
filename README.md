@@ -6,7 +6,7 @@ pip install -r requirements.txt
 
 === Télécharger le nécessaire au bon fonctionnement du projet ===
 
-Un fichier qui contient un modèle CNN pré-entraîné : https://www.dropbox.com/scl/fi/123gb88erzmqaetsz64vh/model.keras?rlkey=u9irvhwjbrcr65o6rbvbjeqq2&dl=0
+Un fichier qui contient un modèle CNN pré-entraîné : https://ephec-my.sharepoint.com/:f:/g/personal/he202145_students_ephec_be/EgQa70u92DZCq0Cbu9AaseABdMv9-BIUzxbVxnZgbH2zTQ?e=dGGe8Q
 (Autre solution, utiliser le script image_process.py pour créer un nouveau modèle)
 
 Dataset d'images nécessaire à l'entraînement du CNN : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
