@@ -9,17 +9,17 @@ pip install -r requirements.txt
 Via ce lien : https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors
 
 === Structure de fichier pour le bon fonctionnement du projet ===
-.
-└── Projet-tds/
-    ├── Dataset/
-    │   ├── paper
-    │   ├── rock
-    │   └── scissors
-    ├── image_process.py
-    ├── main.py
-    ├── model.keras
-    ├── README.md
-    └── requirements.txt
+.  
+└── Projet-tds/  
+    ├── Dataset/  
+    │   ├── paper  
+    │   ├── rock  
+    │   └── scissors  
+    ├── image_process.py  
+    ├── main.py  
+    ├── model.keras  
+    ├── README.md  
+    └── requirements.txt  
 
 === Explication des fichiers importants ===
 
