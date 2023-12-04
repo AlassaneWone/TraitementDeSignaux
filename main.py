@@ -20,6 +20,7 @@ standard_size = (100, 100)
 player_score = 0
 computer_score = 0
 
+
 def process_image(frame):
     """
     PRE: 'frame' is a color (BGR) image obtained from a webcam or a file.
@@ -36,6 +37,7 @@ def process_image(frame):
     result = cv2.subtract(img_gray, cv2.bitwise_not(mask))
     return result
 
+
 def countdown(label_gesture, label_computer_choice, label_result):
     """
     PRE: 'label_gesture', 'label_computer_choice', and 'label_result' are tkinter Label widgets.
@@ -49,9 +51,9 @@ def countdown(label_gesture, label_computer_choice, label_result):
     if player_gesture == computer_choice:
         result_text = "Draw"
     elif (
-        (player_gesture == "rock" and computer_choice == "scissors") or
-        (player_gesture == "paper" and computer_choice == "rock") or
-        (player_gesture == "scissors" and computer_choice == "paper")
+            (player_gesture == "rock" and computer_choice == "scissors") or
+            (player_gesture == "paper" and computer_choice == "rock") or
+            (player_gesture == "scissors" and computer_choice == "paper")
     ):
         result_text = "You Won!"
         player_score += 1
@@ -73,7 +75,7 @@ def show_camera():
          'root' is a tkinter root or Toplevel window.
     POST: 'panel' is updated with a new frame from the video source.
     """
-    frame = vs.read()
+    _, frame = vs.read()
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     frame = Image.fromarray(frame)
     frame = ImageTk.PhotoImage(frame)
@@ -91,7 +93,7 @@ def capture_screenshot():
     POST: 'panel_camera', 'label_probability', 'label_gesture', and 'label_computer_choice' are updated with new information.
           A new thread is started to determine the winner of the round.
     """
-    frame = vs.read()
+    _, frame = vs.read()
     screenshot_color = frame.copy()
     screenshot = process_image(screenshot_color)
 
@@ -108,12 +110,14 @@ def capture_screenshot():
     panel_camera.config(image=image)
     panel_camera.image = image
 
-    label_probability.config(text=f"Probability : Paper:{(label[0]*100):.2f}%, Rock:{(label[1]*100):.2f}%, Scissors:{(label[2]*100):.2f}%")
+    label_probability.config(
+        text=f"Probability : Paper:{(label[0] * 100):.2f}%, Rock:{(label[1] * 100):.2f}%, Scissors:{(label[2] * 100):.2f}%")
     label_gesture.config(text=f"Geste détecté : {gesture}")
     label_computer_choice.config(text=f"Computer : {random.choice(categories)}")
 
     countdown_thread = threading.Thread(target=countdown, args=(label_gesture, label_computer_choice, label_result))
     countdown_thread.start()
+
 
 # Tkinter window creation
 root = tk.Tk()
@@ -171,6 +175,3 @@ root.mainloop()
 # Clean stop of video capture when application is closed
 vs.release()
 cv2.destroyAllWindows()
-
-
-
